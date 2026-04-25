@@ -1,0 +1,28 @@
+# Reorganization rules. Evaluated top-to-bottom; first match per note wins.
+# Run `evnote plan rules/example.yaml` to preview, `evnote apply ... --no-dry-run` to commit.
+
+- name: "Move 2024 receipts into Receipts/2024"
+  match:
+    tag: receipt
+    created_year: 2024
+  action:
+    move_to_notebook: "Receipts/2024"
+
+- name: "Tag web clips"
+  match:
+    source_url_present: true
+  action:
+    add_tags: ["web-clip"]
+
+- name: "Archive notes older than 2020-01-01"
+  match:
+    updated_before: "2020-01-01"
+  action:
+    move_to_notebook: "Archive"
+    add_tags: ["archived"]
+
+- name: "Rename Inbox-old → Inbox"
+  action:
+    rename_notebook:
+      from: "Inbox-old"
+      to: "Inbox"
