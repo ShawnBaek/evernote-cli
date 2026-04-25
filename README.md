@@ -53,7 +53,7 @@ Pick a folder where you want the tool to live. The `Documents` folder is fine:
 
 ```bash
 cd ~/Documents
-git clone https://github.com/sungwookbaek/evernote-cli.git
+git clone https://github.com/ShawnBaek/evernote-cli.git
 cd evernote-cli
 ```
 
