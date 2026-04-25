@@ -57,12 +57,28 @@ class Rule:
     action: Action
 
 
-def load(path: str | Path) -> list[Rule]:
+def load(path: str | Path) -> tuple[dict, list[Rule]]:
+    """Parse a rules YAML.
+
+    Two accepted shapes:
+      1. Bare list of rules (legacy):    [- name: ..., match: ..., action: ...]
+      2. Mapping with optional defaults: {defaults: {into_stack: ...}, rules: [...]}
+    Returns ``(defaults_dict, rule_list)``.
+    """
     raw = yaml.safe_load(Path(path).read_text())
-    if not isinstance(raw, list):
-        raise ValueError(f"{path}: top-level must be a list of rules")
+    if isinstance(raw, list):
+        defaults: dict = {}
+        items = raw
+    elif isinstance(raw, dict):
+        defaults = dict(raw.get("defaults") or {})
+        items = raw.get("rules") or []
+        if not isinstance(items, list):
+            raise ValueError(f"{path}: 'rules' must be a list")
+    else:
+        raise ValueError(f"{path}: top-level must be a list or a mapping")
+
     rules: list[Rule] = []
-    for i, item in enumerate(raw):
+    for i, item in enumerate(items):
         if not isinstance(item, dict):
             raise ValueError(f"{path}[{i}]: rule must be a mapping")
         name = item.get("name") or f"rule_{i}"
@@ -71,7 +87,7 @@ def load(path: str | Path) -> list[Rule]:
         if action.is_empty():
             raise ValueError(f"{path}[{name}]: action is empty")
         rules.append(Rule(name=name, match=match, action=action))
-    return rules
+    return defaults, rules
 
 
 def matches(rule: Rule, note, notebook_name: str, tag_names: set[str], content: str | None = None) -> bool:

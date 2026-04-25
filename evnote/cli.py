@@ -122,8 +122,19 @@ def list_cmd(
 @app.command()
 def backup():
     """Create an ENEX safety snapshot via evernote-backup."""
-    if not shutil.which("evernote-backup"):
-        typer.echo("evernote-backup not found. Install with: brew install evernote-backup", err=True)
+    import sys
+    # Prefer the evernote-backup binary alongside our Python (works in a venv).
+    candidates = [
+        Path(sys.executable).parent / "evernote-backup",
+        Path(shutil.which("evernote-backup") or ""),
+    ]
+    en_bk = next((str(p) for p in candidates if p.exists()), None)
+    if not en_bk:
+        typer.echo(
+            "evernote-backup not found. Install with: pip install evernote-backup "
+            "(or brew install evernote-backup)",
+            err=True,
+        )
         raise typer.Exit(2)
 
     cfg = Config.load()
@@ -133,24 +144,22 @@ def backup():
     db = target / "evernote.db"
 
     typer.echo(f"Snapshot → {target}")
-    subprocess.check_call([
-        "evernote-backup", "init-db",
-        "--database", str(db),
-        "--oauth", "--token", cfg.token,
-    ])
-    subprocess.check_call(["evernote-backup", "sync", "--database", str(db)])
-    subprocess.check_call(["evernote-backup", "export", "--database", str(db), str(target)])
+    subprocess.check_call([en_bk, "init-db", "--database", str(db), "--token", cfg.token])
+    subprocess.check_call([en_bk, "sync", "--database", str(db)])
+    subprocess.check_call([en_bk, "export", "--database", str(db), str(target)])
     typer.echo("Backup complete.")
 
 
 @app.command()
 def plan(rules_path: Path = typer.Argument(..., exists=True, readable=True)):
     """Print what would change if these rules were applied."""
-    rule_list = rules.load(rules_path)
-    p = planner.build(rule_list)
+    defaults, rule_list = rules.load(rules_path)
+    p = planner.build(rule_list, defaults)
     if not p.note_actions and not p.notebook_actions:
         typer.echo("No matches.")
         return
+    if p.default_stack:
+        typer.echo(f"  (new notebooks will go into stack: {p.default_stack!r})")
     for nba in p.notebook_actions:
         typer.echo(f"  RENAME notebook {nba.rename_from!r} -> {nba.rename_to!r}  [{nba.rule_name}]")
     for na in p.note_actions:
@@ -164,8 +173,8 @@ def apply(
     dry_run: bool = typer.Option(True, "--dry-run/--no-dry-run", help="Preview only by default."),
 ):
     """Execute the rules. Defaults to --dry-run; pass --no-dry-run to commit."""
-    rule_list = rules.load(rules_path)
-    p = planner.build(rule_list)
+    defaults, rule_list = rules.load(rules_path)
+    p = planner.build(rule_list, defaults)
     counts = execute(p, dry_run=dry_run, log=lambda tag, msg: typer.echo(f"[{tag}] {msg}"))
     typer.echo(f"Done. {counts}{' (dry-run)' if dry_run else ''}")
 

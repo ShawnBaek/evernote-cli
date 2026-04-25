@@ -1,0 +1,192 @@
+# Reorganize all dev-related notebooks under a single 'Development' stack.
+#
+# - Pure framework/topic notebooks → consolidate into 6 framework notebooks
+#   (iOS, Android, Server-Side, Web, Algorithms-Interview, Research-CV)
+# - Project notebooks → tagged with project-<slug> but NOT moved (their
+#   notes span multiple frameworks; tagging preserves the project axis).
+# - Newly-created notebooks land under the 'Development' stack.
+
+defaults:
+  into_stack: Development
+
+rules:
+
+  # === Project tag rules run FIRST so they win over framework rules below. ===
+  # Most project notebooks aren't in the framework lists, but a few overlap
+  # (e.g. Frequent FlyClub is in iOS Development stack); tagging without
+  # moving preserves their current notebook.
+
+  - name: "Tag craket notes"
+    match: { notebook: "craket" }
+    action: { add_tags: ["project-craket"] }
+
+  - name: "Tag Travel Crumbs notes"
+    match: { notebook: "Travel Crumbs" }
+    action: { add_tags: ["project-travel-crumbs"] }
+
+  - name: "Tag ShawnLibraries notes"
+    match: { notebook: "ShawnLibraries" }
+    action: { add_tags: ["project-shawn-libraries"] }
+
+  - name: "Tag 구름 카메라 notes"
+    match: { notebook: "구름 카메라" }
+    action: { add_tags: ["project-gureum-camera"] }
+
+  - name: "Tag Frequent FlyClub notes"
+    match: { notebook: "Frequent FlyClub" }
+    action: { add_tags: ["project-frequent-flyclub"] }
+
+  - name: "Tag pebble 개발 notes"
+    match: { notebook: "pebble 개발" }
+    action: { add_tags: ["project-pebble"] }
+
+  - name: "Tag 모바일 프로젝트 notes"
+    match: { notebook: "모바일 프로젝트" }
+    action: { add_tags: ["project-mobile"] }
+
+  - name: "Tag 블로그 포스팅 notes"
+    match: { notebook: "블로그 포스팅" }
+    action: { add_tags: ["project-blog"] }
+
+  - name: "Tag HWS Moderator notes"
+    match: { notebook: "HWS Moderator" }
+    action: { add_tags: ["project-hws-moderator"] }
+
+  - name: "Tag Hipvan notes"
+    match: { notebook: "Hipvan" }
+    action: { add_tags: ["project-hipvan"] }
+
+  # LINE work projects — both project-specific tag AND a 'work' tag
+
+  - name: "Tag Pay App Dev notes"
+    match: { notebook: "Pay App Dev" }
+    action: { add_tags: ["project-pay-app", "work"] }
+
+  - name: "Tag Pay Main notes"
+    match: { notebook: "Pay Main" }
+    action: { add_tags: ["project-pay-main", "work"] }
+
+  - name: "Tag E-KYC notes"
+    match: { notebook: "E-KYC" }
+    action: { add_tags: ["project-ekyc", "work"] }
+
+  - name: "Tag TH-KYC notes"
+    match: { notebook: "TH-KYC" }
+    action: { add_tags: ["project-th-kyc", "work"] }
+
+  - name: "Tag BTS notes"
+    match: { notebook: "BTS" }
+    action: { add_tags: ["project-bts", "work"] }
+
+  - name: "Tag Talaria notes"
+    match: { notebook: "Talaria" }
+    action: { add_tags: ["project-talaria", "work"] }
+
+  - name: "Tag 영어학원 정산 notes"
+    match: { notebook: "영어학원 정산" }
+    action: { add_tags: ["project-english-academy", "work"] }
+
+
+  # === Framework consolidation. Each rule moves all notes from one source
+  # notebook into the corresponding bucket. Project notes already matched
+  # above will not reach these rules (first-match-wins). ===
+
+  # ---- iOS ----
+  - { name: "iOS ← ios 개발",                          match: { notebook: "ios 개발" },                                              action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Swift",                             match: { notebook: "Swift" },                                                 action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Core Data",                         match: { notebook: "Core Data" },                                             action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← iOS Interview",                     match: { notebook: "iOS Interview" },                                         action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Conference Talks",                  match: { notebook: "Conference Talks" },                                      action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Apple Guide",                       match: { notebook: "Apple Guide" },                                           action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Book Review",                       match: { notebook: "Book Review" },                                           action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Design Pattern (iOS stack)",        match: { notebook: "Design Pattern" },                                        action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Machine Learning (iOS stack)",      match: { notebook: "Machine Learning" },                                      action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← objc.io",                           match: { notebook: "objc.io" },                                               action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Algorithm (iOS stack)",             match: { notebook: "Algorithm" },                                             action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← User Interface",                    match: { notebook: "User Interface" },                                        action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Raywenderlich Resources",           match: { notebook: "Raywenderlich Resources" },                               action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Game Development",                  match: { notebook: "Game Development" },                                      action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Mac Tips",                          match: { notebook: "Mac Tips" },                                              action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← XCode Tool",                        match: { notebook: "XCode Tool" },                                            action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← UI Tips",                           match: { notebook: "UI Tips" },                                               action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← DesignCode",                        match: { notebook: "DesignCode" },                                            action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← MacOS Development",                 match: { notebook: "MacOS Development" },                                     action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← WatchOS Development",               match: { notebook: "WatchOS Development" },                                   action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← Blockchining Programming in iOS",   match: { notebook: "Blockchining Programming in iOS" },                       action: { move_to_notebook: "iOS" } }
+  - { name: "iOS ← iOS 개발 관련",                     match: { notebook: "iOS 개발 관련" },                                         action: { move_to_notebook: "iOS" } }
+
+  # ---- Server-Side ----
+  - { name: "Server-Side ← Back-End",                  match: { notebook: "Back-End" },                                              action: { move_to_notebook: "Server-Side" } }
+  - { name: "Server-Side ← 아마존 AWS",                match: { notebook: "아마존 AWS" },                                            action: { move_to_notebook: "Server-Side" } }
+  - { name: "Server-Side ← Parse-Server",              match: { notebook: "Parse-Server" },                                          action: { move_to_notebook: "Server-Side" } }
+  - { name: "Server-Side ← Server Side Swift",         match: { notebook: "Server Side Swift" },                                     action: { move_to_notebook: "Server-Side" } }
+
+  # ---- Web ----
+  - { name: "Web ← SEO",                               match: { notebook: "SEO" },                                                   action: { move_to_notebook: "Web" } }
+  - { name: "Web ← 웹페이지",                          match: { notebook: "웹페이지" },                                              action: { move_to_notebook: "Web" } }
+  - { name: "Web ← Wordpress Development",             match: { notebook: "Wordpress Development" },                                 action: { move_to_notebook: "Web" } }
+  - { name: "Web ← React Development 1",               match: { notebook: "React Development 1" },                                   action: { move_to_notebook: "Web" } }
+  - { name: "Web ← Web Development",                   match: { notebook: "Web Development" },                                       action: { move_to_notebook: "Web" } }
+  - { name: "Web ← CSS",                               match: { notebook: "CSS" },                                                   action: { move_to_notebook: "Web" } }
+
+  # ---- Algorithms-Interview ----
+  - { name: "AlgInt ← Break Away Programming",         match: { notebook: "Break Away Programming and Coding Interview" },           action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Interview Preparation",          match: { notebook: "Interview Preparation" },                                 action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Git 사용",                       match: { notebook: "Git 사용" },                                              action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Design Pattern from 0 to 1",     match: { notebook: "Design Pattern from 0 to 1" },                            action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Algorithm and DataStructure Java Part 1", match: { notebook: "Algorithm and DataStructure in Java Part 1" },  action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Software Interview",             match: { notebook: "Software Interview" },                                    action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← WayneBishop Algorithm",          match: { notebook: "WayneBishop Algorithm" },                                 action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← iOS Interview Preparation",      match: { notebook: "iOS Interview Preparation" },                             action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Algorithmic Problems in Java",   match: { notebook: "Algorithmic Problems in Java" },                          action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Career Hacking",                 match: { notebook: "Career Hacking: Resume, LinkedIn®, Interviewing" },       action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← From 0 to 1 DSA Java",           match: { notebook: "From 0 to 1: Data Structures & Algorithms in Java" },     action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Grokking System Design",         match: { notebook: "Grokking the System Design Interview" },                  action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← iOS Engineer Interview 준비",    match: { notebook: "iOS Engineer Interview 준비" },                           action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Advanced Algorithm Java",        match: { notebook: "Advanced Algorithm in Java" },                            action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Coding Interview Bootcamp",      match: { notebook: "The Coding Interview Bootcamp: Algorithms + Data Structure" }, action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Amazon",                         match: { notebook: "Amazon" },                                                action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← CS Notes",                       match: { notebook: "CS Notes" },                                              action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Algorithms Java Part II",        match: { notebook: "Algorithms and Data Structures in Java - Part II" },     action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Line",                           match: { notebook: "Line" },                                                  action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← TOOL 단축키",                    match: { notebook: "TOOL 단축키" },                                           action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← 채용 사이트",                    match: { notebook: "채용 사이트" },                                           action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← System Design Interview",        match: { notebook: "System Design Interview" },                               action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Google",                         match: { notebook: "Google" },                                                action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Complete Bootcamp Python",       match: { notebook: "Complete Bootcamp Python" },                              action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Hacking Interview",              match: { notebook: "Hacking Interview" },                                     action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← English Interview",              match: { notebook: "English Interview" },                                     action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Ethereum and Solidity",          match: { notebook: "Ethereum and Solidity : Complete Developer Guide" },      action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Resume + CV",                    match: { notebook: "Resume + CV" },                                           action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Interviewcake",                  match: { notebook: "Interviewcake" },                                         action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Interview English",              match: { notebook: "Interview English" },                                     action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Interview 정리",                 match: { notebook: "Interview 정리" },                                        action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← 해외 생활 및 연봉 정보",         match: { notebook: "해외 생활 및 연봉 정보" },                                action: { move_to_notebook: "Algorithms-Interview" } }
+  - { name: "AlgInt ← Agile Process",                  match: { notebook: "Agile Process" },                                         action: { move_to_notebook: "Algorithms-Interview" } }
+
+  # ---- Research-CV ----
+  - { name: "ResCV ← 졸업논문",                        match: { notebook: "졸업논문" },                                              action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 연구",                            match: { notebook: "연구" },                                                  action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 3D Pose Estimation",              match: { notebook: "3D Pose Estimation" },                                    action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← ISMAR 2012",                      match: { notebook: "ISMAR 2012" },                                            action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 증강현실",                        match: { notebook: "증강현실" },                                              action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Tracking",                        match: { notebook: "Tracking" },                                              action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 핸드 제스쳐",                     match: { notebook: "핸드 제스쳐" },                                           action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Augmented Reality",               match: { notebook: "Augmented Reality" },                                     action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Computer Vision",                 match: { notebook: "Computer Vision" },                                       action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Hand Gesture Recognition",        match: { notebook: "Hand Gesture Recognition" },                              action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← BaekAR AND HandyAR Integration",  match: { notebook: "BaekAR AND HandyAR Integration" },                        action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Feature Detector & Descriptor",   match: { notebook: "Feature Detector & Descriptor" },                         action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← One Shot Camera",                 match: { notebook: "One Shot Camera" },                                       action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 사진자료",                        match: { notebook: "사진자료" },                                              action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 양식",                            match: { notebook: "양식" },                                                  action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 주요 논문 일정",                  match: { notebook: "주요 논문 일정" },                                        action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 멤버십을 수료하며",               match: { notebook: "멤버십을 수료하며" },                                     action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Related Works",                   match: { notebook: "Related Works" },                                         action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Hardware",                        match: { notebook: "Hardware" },                                              action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Source Code",                     match: { notebook: "Source Code" },                                           action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← 발표자료",                        match: { notebook: "발표자료" },                                              action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← MS ImagineCUP",                   match: { notebook: "MS ImagineCUP" },                                         action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← Shape",                           match: { notebook: "Shape" },                                                 action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← User Research",                   match: { notebook: "User Research" },                                         action: { move_to_notebook: "Research-CV" } }
+  - { name: "ResCV ← UX",                              match: { notebook: "UX" },                                                    action: { move_to_notebook: "Research-CV" } }

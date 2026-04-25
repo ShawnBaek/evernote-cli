@@ -1,0 +1,27 @@
+# Phase A: attachment-preservation safety test.
+# Moves ONE specific note (with a PNG attachment) from 'ios 개발' to a
+# throwaway notebook, so we can verify in the Evernote app that the
+# attachment survives a metadata-only updateNote() call.
+#
+# After verifying, the reverse rule below moves it back to 'ios 개발'.
+# To use the reverse: comment the first rule, uncomment the second, then
+# `evnote apply rules/safety-test.yaml --no-dry-run`.
+
+defaults:
+  into_stack: __safety-test
+
+rules:
+  - name: "Move test note to throwaway notebook"
+    match:
+      title_regex: "^No suitable application records were found"
+      notebook: "ios 개발"
+    action:
+      move_to_notebook: "__attachment-safety-test"
+
+  # Reverse — uncomment to restore:
+  # - name: "Move test note back to ios 개발"
+  #   match:
+  #     title_regex: "^No suitable application records were found"
+  #     notebook: "__attachment-safety-test"
+  #   action:
+  #     move_to_notebook: "ios 개발"

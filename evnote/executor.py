@@ -64,7 +64,7 @@ def execute(plan: Plan, dry_run: bool = True, log=lambda *_: None) -> dict[str, 
             if na.move_to_notebook:
                 target = notebooks_by_name.get(na.move_to_notebook)
                 if not target:
-                    target = _create_notebook(note_store, na.move_to_notebook)
+                    target = _create_notebook(note_store, na.move_to_notebook, plan.default_stack)
                     notebooks_by_name[target.name] = target
                 note.notebookGuid = target.guid
                 counts["moved"] += 1
@@ -105,8 +105,11 @@ def execute(plan: Plan, dry_run: bool = True, log=lambda *_: None) -> dict[str, 
     return counts
 
 
-def _create_notebook(note_store, name: str) -> cache.Notebook:
-    created = call_with_retry(note_store.createNotebook, EvNotebook(name=name))
+def _create_notebook(note_store, name: str, stack: str | None = None) -> cache.Notebook:
+    nb = EvNotebook(name=name)
+    if stack:
+        nb.stack = stack
+    created = call_with_retry(note_store.createNotebook, nb)
     return cache.Notebook(created.guid, created.name, getattr(created, "stack", None))
 
 

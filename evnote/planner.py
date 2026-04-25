@@ -29,9 +29,10 @@ class NotebookAction:
 class Plan:
     note_actions: list[NoteAction]
     notebook_actions: list[NotebookAction]
+    default_stack: str | None = None
 
 
-def build(rule_list: list[rules.Rule]) -> Plan:
+def build(rule_list: list[rules.Rule], defaults: dict | None = None) -> Plan:
     note_actions: list[NoteAction] = []
     notebook_actions: list[NotebookAction] = []
     needs_content = rules.needs_content(rule_list)
@@ -81,7 +82,12 @@ def build(rule_list: list[rules.Rule]) -> Plan:
             )
             break  # first match wins
 
-    return Plan(note_actions=note_actions, notebook_actions=notebook_actions)
+    default_stack = (defaults or {}).get("into_stack")
+    return Plan(
+        note_actions=note_actions,
+        notebook_actions=notebook_actions,
+        default_stack=default_stack,
+    )
 
 
 def _apply_title_template(note: cache.Note, notebook_name: str, template: str) -> str:

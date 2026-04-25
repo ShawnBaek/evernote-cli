@@ -77,8 +77,8 @@ class PlannerE2E(unittest.TestCase):
     def test_example_rules(self):
         from evnote import planner, rules
         self._seed()
-        rule_list = rules.load(Path("rules/example.yaml"))
-        plan = planner.build(rule_list)
+        defaults, rule_list = rules.load(Path("rules/example.yaml"))
+        plan = planner.build(rule_list, defaults)
 
         by_guid = {a.note_guid: a for a in plan.note_actions}
 
@@ -128,6 +128,32 @@ class PlannerE2E(unittest.TestCase):
         for a in plan.note_actions:
             self.assertEqual(a.rule_name, "r1")
             self.assertEqual(a.add_tags, ["t1"])
+
+    def test_defaults_into_stack(self):
+        """YAML with defaults.into_stack populates Plan.default_stack."""
+        from evnote import planner, rules
+        import yaml
+        yaml_text = yaml.safe_dump({
+            "defaults": {"into_stack": "Development"},
+            "rules": [
+                {"name": "to-iOS", "match": {"notebook": "Misc"},
+                 "action": {"move_to_notebook": "iOS"}},
+            ],
+        })
+        rules_path = self.tmp / "test.yaml"
+        rules_path.write_text(yaml_text)
+        defaults, rule_list = rules.load(rules_path)
+        self.assertEqual(defaults, {"into_stack": "Development"})
+        self._seed()
+        plan = planner.build(rule_list, defaults)
+        self.assertEqual(plan.default_stack, "Development")
+
+    def test_legacy_bare_list_still_loads(self):
+        """A YAML that's just a list of rules (no defaults block) still loads."""
+        from evnote import rules
+        defaults, rule_list = rules.load(Path("rules/example.yaml"))
+        self.assertEqual(defaults, {})
+        self.assertGreater(len(rule_list), 0)
 
 
 if __name__ == "__main__":
