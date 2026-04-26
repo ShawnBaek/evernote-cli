@@ -17,17 +17,21 @@ from thrift.transport import THttpClient
 import http.client as _http_client
 
 
+# Default socket timeout (seconds). Without this, Evernote can hang TCP
+# connects indefinitely when rate-limiting, making the process look stuck
+# instead of throwing a recoverable error.
+_DEFAULT_HTTP_TIMEOUT = 60.0
+
+
 def _patched_open(self):  # noqa: ANN001
+    timeout = self._THttpClient__timeout or _DEFAULT_HTTP_TIMEOUT
     if self.scheme == "http":
         self._THttpClient__http = _http_client.HTTPConnection(
-            self.host, self.port, timeout=self._THttpClient__timeout
+            self.host, self.port, timeout=timeout
         )
     elif self.scheme == "https":
         self._THttpClient__http = _http_client.HTTPSConnection(
-            self.host,
-            self.port,
-            timeout=self._THttpClient__timeout,
-            context=self.context,
+            self.host, self.port, timeout=timeout, context=self.context,
         )
     if self.using_proxy():
         self._THttpClient__http.set_tunnel(
@@ -112,14 +116,30 @@ def make_client(cfg: Config | None = None) -> EvernoteClient:
     return EvernoteClient(cfg or Config.load())
 
 
-def call_with_retry(fn, *args, max_attempts: int = 5, **kwargs):
-    """Run an Evernote API call, sleeping when the server tells us to (rate limit)."""
+def call_with_retry(fn, *args, max_attempts: int = 8, _log=None, **kwargs):
+    """Run an Evernote API call, retrying on rate-limit and transient network errors.
+
+    If ``_log`` is provided it gets called with ('RATELIMIT'|'NETERROR', message)
+    so the operator can see what's happening — silent multi-minute waits make
+    the process look stuck.
+    """
+    import socket
     for attempt in range(1, max_attempts + 1):
         try:
             return fn(*args, **kwargs)
         except EDAMSystemException as e:
             if e.errorCode == EDAMErrorCode.RATE_LIMIT_REACHED and attempt < max_attempts:
                 wait = int(getattr(e, "rateLimitDuration", 30)) + 1
+                if _log:
+                    _log("RATELIMIT", f"sleeping {wait}s (attempt {attempt}/{max_attempts})")
+                time.sleep(wait)
+                continue
+            raise
+        except (socket.timeout, ConnectionError, OSError) as e:
+            if attempt < max_attempts:
+                wait = min(60, 2 ** attempt)  # 2,4,8,16,32,60,60,60
+                if _log:
+                    _log("NETERROR", f"{type(e).__name__}: {e}; backoff {wait}s (attempt {attempt}/{max_attempts})")
                 time.sleep(wait)
                 continue
             raise

@@ -1,0 +1,27 @@
+# Split Android-content notes out of mixed Korean notebooks into the Android
+# bucket. Project tags are already on these notes from rules/dev-reorg.yaml,
+# so this YAML only moves them. "Favorite tweets" notes that *mention* Android
+# in tweet text are intentionally excluded — they're not Android dev content.
+
+defaults:
+  into_stack: Development
+
+rules:
+  - name: "Android ← 구름 카메라 (Korean: 안드로이드 / English: Android)"
+    match:
+      notebook: "구름 카메라"
+      title_regex: "안드로이드|[Aa]ndroid"
+    action:
+      move_to_notebook: "Android"
+
+  - name: "Android ← 프로젝트"
+    match:
+      notebook: "프로젝트"
+      title_regex: "안드로이드|[Aa]ndroid"
+    action:
+      move_to_notebook: "Android"
+
+  # NOTE: 생각나는 대로 ("as thoughts come to mind") is the user's personal
+  # thought-dump notebook — left untouched per the original plan. Even if
+  # some titles start with "Android", those are personal notes, not pure
+  # dev content destined for the framework bucket.
